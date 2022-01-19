@@ -1,6 +1,5 @@
 package ru.trofimom.coffeemakerrestservice.rest;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,16 +19,23 @@ public class CoffeeMakerRestController {
     }
 
     @GetMapping
-    public ResponseEntity<ResultResponse> makeCoffee(){
-        return ResponseEntity.ok(coffeeMakerService.makeCoffee());
+    public ResponseEntity<ResultResponse> makeCoffee(@RequestParam(defaultValue = "1") Integer cups){
+        return ResponseEntity.ok(coffeeMakerService.makeCoffee(cups));
     }
 
     @GetMapping("/set")
-    public ResponseEntity<Boolean> setOptions(@RequestParam(required = false) Integer waterTemperature,
+    public ResponseEntity<ResultResponse> setParameters(@RequestParam(required = false) Integer waterTemperature,
                                               @RequestParam(required = false) Integer hardWater){
-        System.out.println("waterTemperature = " + waterTemperature);
-        System.out.println("hardWater = " + hardWater);
+        return ResponseEntity.ok(coffeeMakerService.setParameters(waterTemperature, hardWater));
+    }
 
-        return new ResponseEntity<>(true, HttpStatus.OK);
+    @GetMapping("/condition")
+    public ResponseEntity<ResultResponse> showCondition(){
+        return ResponseEntity.ok(coffeeMakerService.showCondition());
+    }
+
+    @GetMapping("/cleaning")
+    public ResponseEntity<ResultResponse> cleaning(){
+        return ResponseEntity.ok(coffeeMakerService.cleaning());
     }
 }
