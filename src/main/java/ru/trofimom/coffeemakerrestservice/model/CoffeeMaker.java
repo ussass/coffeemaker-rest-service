@@ -1,6 +1,8 @@
 package ru.trofimom.coffeemakerrestservice.model;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 @Entity
 @Table(name = "coffeemaker")
@@ -16,12 +18,21 @@ public class CoffeeMaker {
     @Column(name = "hard_water")
     private int hardWater;
 
-    @Column(name = "remaining_portions_before_cleaning")
-    private int remainingPortionsBeforeCleaning;
+    @Column(name = "remaining_cups_before_cleaning")
+    private int remainingCupsBeforeCleaning;
 
     private long datetime;
 
     public CoffeeMaker() {
+    }
+
+    public CoffeeMaker(int waterTemperature, int hardWater, int remainingCupsBeforeCleaning) {
+        this.waterTemperature = waterTemperature;
+        this.hardWater = hardWater;
+        this.remainingCupsBeforeCleaning = remainingCupsBeforeCleaning;
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
+        LocalDateTime now = LocalDateTime.now();
+        datetime = Long.parseLong(dateTimeFormatter.format(now));
     }
 
     public long getId() {
@@ -48,11 +59,11 @@ public class CoffeeMaker {
         this.hardWater = hardWater;
     }
 
-    public int getRemainingPortionsBeforeCleaning() {
-        return remainingPortionsBeforeCleaning;
+    public int getRemainingCupsBeforeCleaning() {
+        return remainingCupsBeforeCleaning;
     }
 
-    public void setRemainingPortionsBeforeCleaning(int remainingPortionsBeforeCleaning) {
-        this.remainingPortionsBeforeCleaning = remainingPortionsBeforeCleaning;
+    public void setRemainingCupsBeforeCleaning(int remainingCupsBeforeCleaning) {
+        this.remainingCupsBeforeCleaning = remainingCupsBeforeCleaning;
     }
 }
