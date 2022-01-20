@@ -10,8 +10,13 @@ import ru.trofimom.coffeemakerrestservice.response.ResultResponse;
 public class CoffeeMakerExceptionHandler {
 
     @ExceptionHandler(ApplicationException.class)
-    ResponseEntity<ResultResponse> invalidLoginOrPassword(ApplicationException e) {
+    ResponseEntity<ResultResponse> invalidRrequestBody(ApplicationException e) {
         return handleInternal(HttpStatus.BAD_REQUEST, e.getLocalizedMessage());
+    }
+
+    @ExceptionHandler(CoffeeMakerException.class)
+    ResponseEntity<ResultResponse> coffeeMakerResourceError(ApplicationException e) {
+        return handleInternal(HttpStatus.LOCKED , e.getLocalizedMessage());
     }
 
     private ResponseEntity<ResultResponse> handleInternal(HttpStatus status, String message) {
