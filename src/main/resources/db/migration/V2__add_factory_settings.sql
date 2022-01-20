@@ -1,0 +1,1 @@
+INSERT INTO coffeemaker (water_temperature, hard_water, remaining_cups_before_cleaning, datetime) values (2, 2, 200, 0);
