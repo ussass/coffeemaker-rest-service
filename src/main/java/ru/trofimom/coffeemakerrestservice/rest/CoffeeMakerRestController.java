@@ -1,10 +1,11 @@
 package ru.trofimom.coffeemakerrestservice.rest;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import ru.trofimom.coffeemakerrestservice.model.Parameters;
 import ru.trofimom.coffeemakerrestservice.response.ResultResponse;
 import ru.trofimom.coffeemakerrestservice.service.CoffeeMakerService;
 
@@ -19,23 +20,35 @@ public class CoffeeMakerRestController {
     }
 
     @GetMapping
-    public ResponseEntity<ResultResponse> makeCoffee(@RequestParam(defaultValue = "1") Integer cups){
+    @Operation(summary = "Make coffee")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "coffee has started to be made or a warning that there is no water")})
+    public ResponseEntity<ResultResponse> makeCoffee(@RequestParam(defaultValue = "1") Integer cups) {
         return ResponseEntity.ok(coffeeMakerService.makeCoffee(cups));
     }
 
-    @GetMapping("/set")
-    public ResponseEntity<ResultResponse> setParameters(@RequestParam(required = false) Integer waterTemperature,
-                                              @RequestParam(required = false) Integer hardWater){
-        return ResponseEntity.ok(coffeeMakerService.setParameters(waterTemperature, hardWater));
+    @Operation(summary = "Set parameters")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Data saved successfully"),
+            @ApiResponse(responseCode = "400", description = "Error in request body")})
+    @PostMapping("/set")
+    public ResponseEntity<ResultResponse> setParameters(@RequestBody Parameters parameters) {
+        return ResponseEntity.ok(coffeeMakerService.setParameters(parameters));
     }
 
+    @Operation(summary = "Show condition")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Shows the conditions of the coffee maker")})
     @GetMapping("/condition")
-    public ResponseEntity<ResultResponse> showCondition(){
+    public ResponseEntity<ResultResponse> showCondition() {
         return ResponseEntity.ok(coffeeMakerService.showCondition());
     }
 
+    @Operation(summary = "Cleaning")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Starts descaling the coffee maker")})
     @GetMapping("/cleaning")
-    public ResponseEntity<ResultResponse> cleaning(){
+    public ResponseEntity<ResultResponse> cleaning() {
         return ResponseEntity.ok(coffeeMakerService.cleaning());
     }
 }
