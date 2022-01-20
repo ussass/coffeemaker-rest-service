@@ -16,7 +16,7 @@ public class CoffeeMakerExceptionHandler {
 
     @ExceptionHandler(CoffeeMakerException.class)
     ResponseEntity<ResultResponse> coffeeMakerResourceError(ApplicationException e) {
-        return handleInternal(HttpStatus.LOCKED , e.getLocalizedMessage());
+        return handleInternal(HttpStatus.LOCKED, e.getLocalizedMessage());
     }
 
     private ResponseEntity<ResultResponse> handleInternal(HttpStatus status, String message) {
