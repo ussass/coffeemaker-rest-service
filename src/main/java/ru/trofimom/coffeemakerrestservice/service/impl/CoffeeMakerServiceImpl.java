@@ -2,6 +2,8 @@ package ru.trofimom.coffeemakerrestservice.service.impl;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import ru.trofimom.coffeemakerrestservice.exception.ApplicationException;
+import ru.trofimom.coffeemakerrestservice.exception.CoffeeMakerException;
 import ru.trofimom.coffeemakerrestservice.model.CoffeeMaker;
 import ru.trofimom.coffeemakerrestservice.model.Parameters;
 import ru.trofimom.coffeemakerrestservice.repositories.CoffeeMakerRepository;
@@ -27,7 +29,7 @@ public class CoffeeMakerServiceImpl implements CoffeeMakerService {
     @Override
     public ResultResponse makeCoffee(int cups) {
         if (!resourceCheckingService.waterLevelCheck()) {
-            return new ResultResponse("Not water");
+            throw new CoffeeMakerException("No water");
         }
         CoffeeMaker coffeeMaker = coffeeMakerRepository.findTopByOrderByIdDesc();
 
@@ -45,11 +47,11 @@ public class CoffeeMakerServiceImpl implements CoffeeMakerService {
     public ResultResponse setParameters(Parameters parameters) {
 
         if (parameters.getHardWater() == 0 && parameters.getWaterTemperature() == 0)
-            return new ResultResponse("No data to save");
+            throw new ApplicationException("No data to save");
         if (parameters.getHardWater() < 1 || parameters.getHardWater() > 3)
-            return new ResultResponse("Parameter 'hardWater' must be from 1 to 3");
+            throw new ApplicationException("Parameter 'hardWater' must be from 1 to 3");
         if (parameters.getWaterTemperature() < 1 || parameters.getWaterTemperature() > 3)
-            return new ResultResponse("Parameter 'waterTemperature' must be from 1 to 3");
+            throw new ApplicationException("Parameter 'waterTemperature' must be from 1 to 3");
 
         CoffeeMaker coffeeMaker = coffeeMakerRepository.findTopByOrderByIdDesc();
 
