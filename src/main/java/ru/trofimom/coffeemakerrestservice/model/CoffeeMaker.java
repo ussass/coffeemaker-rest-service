@@ -1,5 +1,7 @@
 package ru.trofimom.coffeemakerrestservice.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -10,6 +12,7 @@ public class CoffeeMaker {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @JsonIgnore
     private long id;
 
     @Column(name = "water_temperature")
@@ -21,6 +24,7 @@ public class CoffeeMaker {
     @Column(name = "remaining_cups_before_cleaning")
     private int remainingCupsBeforeCleaning;
 
+    @JsonIgnore
     private long datetime;
 
     public CoffeeMaker() {
