@@ -3,7 +3,7 @@ package ru.trofimom.coffeemakerrestservice.service.impl;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import ru.trofimom.coffeemakerrestservice.model.CoffeeMaker;
-import ru.trofimom.coffeemakerrestservice.model.Level;
+import ru.trofimom.coffeemakerrestservice.model.Parameters;
 import ru.trofimom.coffeemakerrestservice.repositories.CoffeeMakerRepository;
 import ru.trofimom.coffeemakerrestservice.response.ResultResponse;
 import ru.trofimom.coffeemakerrestservice.service.CoffeeMakerService;
@@ -30,17 +30,11 @@ public class CoffeeMakerServiceImpl implements CoffeeMakerService {
             return new ResultResponse("Not water");
         }
         CoffeeMaker coffeeMaker = coffeeMakerRepository.findTopByOrderByIdDesc();
-        if (coffeeMaker == null) {
-            coffeeMaker = new CoffeeMaker(
-                    Level.MEDIUM.getLevel(),
-                    Level.MEDIUM.getLevel(),
-                    totalCupsBeforeCleaning - cups * Level.MEDIUM.getLevel());
-        } else {
-            coffeeMaker = new CoffeeMaker(
-                    coffeeMaker.getWaterTemperature(),
-                    coffeeMaker.getHardWater(),
-                    coffeeMaker.getRemainingCupsBeforeCleaning() - cups * coffeeMaker.getHardWater());
-        }
+
+        coffeeMaker = new CoffeeMaker(
+                coffeeMaker.getWaterTemperature(),
+                coffeeMaker.getHardWater(),
+                coffeeMaker.getRemainingCupsBeforeCleaning() - cups * coffeeMaker.getHardWater());
 
         coffeeMakerRepository.save(coffeeMaker);
 
@@ -48,27 +42,21 @@ public class CoffeeMakerServiceImpl implements CoffeeMakerService {
     }
 
     @Override
-    public ResultResponse setParameters(Integer waterTemperature, Integer hardWater) {
+    public ResultResponse setParameters(Parameters parameters) {
 
-        if (waterTemperature == null && hardWater == null)
+        if (parameters.getHardWater() == 0 && parameters.getWaterTemperature() == 0)
             return new ResultResponse("No data to save");
-        if (hardWater < 1 || hardWater > 3)
+        if (parameters.getHardWater() < 1 || parameters.getHardWater() > 3)
             return new ResultResponse("Parameter 'hardWater' must be from 1 to 3");
-        if (waterTemperature < 1 || waterTemperature > 3)
+        if (parameters.getWaterTemperature() < 1 || parameters.getWaterTemperature() > 3)
             return new ResultResponse("Parameter 'waterTemperature' must be from 1 to 3");
 
         CoffeeMaker coffeeMaker = coffeeMakerRepository.findTopByOrderByIdDesc();
-        if (coffeeMaker == null) {
-            coffeeMaker = new CoffeeMaker(
-                    waterTemperature == null ? Level.MEDIUM.getLevel() : waterTemperature,
-                    hardWater == null ? Level.MEDIUM.getLevel() : hardWater,
-                    totalCupsBeforeCleaning);
-        } else {
-            coffeeMaker = new CoffeeMaker(
-                    waterTemperature == null ? coffeeMaker.getWaterTemperature() : waterTemperature,
-                    hardWater == null ? coffeeMaker.getHardWater() : hardWater,
-                    coffeeMaker.getRemainingCupsBeforeCleaning());
-        }
+
+        coffeeMaker = new CoffeeMaker(
+                parameters.getWaterTemperature() == 0 ? coffeeMaker.getWaterTemperature() : parameters.getWaterTemperature(),
+                parameters.getHardWater() == 0 ? coffeeMaker.getHardWater() : parameters.getHardWater(),
+                coffeeMaker.getRemainingCupsBeforeCleaning());
 
         coffeeMakerRepository.save(coffeeMaker);
 
@@ -77,11 +65,21 @@ public class CoffeeMakerServiceImpl implements CoffeeMakerService {
 
     @Override
     public ResultResponse showCondition() {
-        return null;
+        return new ResultResponse(coffeeMakerRepository.findTopByOrderByIdDesc());
     }
 
     @Override
     public ResultResponse cleaning() {
-        return null;
+        CoffeeMaker coffeeMaker = coffeeMakerRepository.findTopByOrderByIdDesc();
+
+        coffeeMaker = new CoffeeMaker(
+                coffeeMaker.getWaterTemperature(),
+                coffeeMaker.getHardWater(),
+                totalCupsBeforeCleaning);
+
+
+        coffeeMakerRepository.save(coffeeMaker);
+
+        return new ResultResponse("Start cleaning");
     }
 }
